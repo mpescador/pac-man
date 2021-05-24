@@ -1,4 +1,4 @@
-const board = Array(19).fill(1).map(() => Array(19).fill(1))
+const board = Array(19).fill(0).map(() => Array(19).fill(0))
 console.log(board)
 const Thief = function () {
   this.posx = 9
@@ -7,8 +7,34 @@ const Thief = function () {
 }
 
 const thief = new Thief()
+const arrR = [[18, 19, 1], [5, 9, 2]]
+const arrC = [[4,8,1],[6,12,4]]
 
 // funciones
+const wallsGeneratorR = function () {
+  for (let i = 0; i < arrR.length; i++) {
+    let cuenta = arrR[i][0]
+
+    for (let j = arrR[i][0]; j < arrR[i][1]; j++) {
+      const rowSelect = document.querySelector(`.row${cuenta + 1}`)
+      const colSelect = rowSelect.querySelector(`.col${arrR[i][2] + 1}`)
+      colSelect.classList.add('walls')
+      cuenta++
+    }
+  }
+}
+const wallsGeneratorC = function () {
+  for (let i = 0; i < arrC.length; i++) {
+    let cuenta = arrC[i][0]
+    console.log(arrC)
+    for (let j = arrC[i][0]; j < arrC[i][1]; j++) {
+      const rowSelect = document.querySelector(`.row${arrC[i][2] + 1}`)
+      const colSelect = rowSelect.querySelector(`.col${cuenta + 1}`)
+      colSelect.classList.add('walls')
+      cuenta++
+    }
+  }
+}
 const changeDirection = function (code) {
   if (code === 'ArrowUp') this.direction = 1
   if (code === 'ArrowRight') this.direction = 2
@@ -22,6 +48,9 @@ const printBoard = function () {
       const rowSelect = document.querySelector(`.row${r + 1}`)
       const colSelect = rowSelect.querySelector(`.col${c + 1}`)
 
+      /*if (board[r][c] === 1) {
+        colSelect.classList.add('walls')
+      }*/
       if (board[r][c] === 2) {
         colSelect.classList.add('thief')
       } else if (board[r][c] === 0) {
@@ -48,8 +77,11 @@ const game = function () {
 
 // ejecucion del juego
 
-setInterval(game, 1000)
+setInterval(game, 600)
 
 window.addEventListener('keydown', function (e) {
   changeDirection(e.code)
 })
+
+wallsGeneratorR()
+wallsGeneratorC()
