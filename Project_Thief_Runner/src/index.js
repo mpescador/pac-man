@@ -19,6 +19,7 @@ const wallsGeneratorR = function () {
       const rowSelect = document.querySelector(`.row${cuenta + 1}`)
       const colSelect = rowSelect.querySelector(`.col${arrR[i][2] + 1}`)
       colSelect.classList.add('walls')
+      board[cuenta][arrR[i][2]] = 1
       cuenta++
     }
   }
@@ -31,6 +32,7 @@ const wallsGeneratorC = function () {
       const rowSelect = document.querySelector(`.row${arrC[i][2] + 1}`)
       const colSelect = rowSelect.querySelector(`.col${cuenta + 1}`)
       colSelect.classList.add('walls')
+      board[arrC[i][2]][cuenta] = 1
       cuenta++
     }
   }
@@ -47,10 +49,6 @@ const printBoard = function () {
     row.forEach(function (col, c) {
       const rowSelect = document.querySelector(`.row${r + 1}`)
       const colSelect = rowSelect.querySelector(`.col${c + 1}`)
-
-      /*if (board[r][c] === 1) {
-        colSelect.classList.add('walls')
-      }*/
       if (board[r][c] === 2) {
         colSelect.classList.add('thief')
       } else if (board[r][c] === 0) {
@@ -61,17 +59,27 @@ const printBoard = function () {
 }
 
 const moveThief = function () {
-  board[thief.posx][thief.posy] = 0
-  if (this.direction === 1) { thief.posx--}
-  else if (this.direction === 2) { thief.posy++ }
-  else if (this.direction === 3) { thief.posx++ }
-  else if (this.direction === 4) { thief.posy-- }
-  board[thief.posx][thief.posy] = 2
+  // 1-up, 2-right, 3-down, 4-left
+  if (this.direction === 1 && board[thief.posy - 1][thief.posx] !== 1) {
+    console.log(board[thief.posy - 1][thief.posx])
+    board[thief.posy][thief.posx] = 0
+    thief.posy--
+  } else if (this.direction === 2 && board[thief.posy][thief.posx + 1] !== 1) {
+    board[thief.posy][thief.posx] = 0
+    thief.posx++
+  } else if (this.direction === 3 && board[thief.posy + 1][thief.posx] !== 1) {
+    board[thief.posy][thief.posx] = 0
+    thief.posy++
+  } else if (this.direction === 4 && board[thief.posy][thief.posx - 1] !== 1) {
+    board[thief.posy][thief.posx] = 0
+    thief.posx--
+  }
+  board[thief.posy][thief.posx] = 2
 }
 
 const game = function () {
-  printBoard()
   moveThief()
+  printBoard()
   console.log(thief.posy)
 }
 
