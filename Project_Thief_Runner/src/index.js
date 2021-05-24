@@ -7,11 +7,11 @@ const Thief = function () {
 }
 
 const thief = new Thief()
-const arrR = [[18, 19, 1], [5, 9, 2]]
-const arrC = [[4,8,1],[6,12,4]]
+const arrR = [[0, 19, 0], [0, 19, 18], [0,4,2], [5,17,2], [3,5,4], [0,11,16], [3,5,13], [6,11,4], [6,11,14], [12,16,4], [12,16,15], [8,11,6], [8,11,12] ]
+const arrC = [[0, 19, 0], [0, 19, 18], [6,12,2], [5,13,4], [5,14,6], [7,12,10], [5,15,12], [6,14,14], [6,14,16]]
 
 // funciones
-const wallsGeneratorR = function () {
+const wallsGeneratorC = function () {
   for (let i = 0; i < arrR.length; i++) {
     let cuenta = arrR[i][0]
 
@@ -24,7 +24,7 @@ const wallsGeneratorR = function () {
     }
   }
 }
-const wallsGeneratorC = function () {
+const wallsGeneratorR = function () {
   for (let i = 0; i < arrC.length; i++) {
     let cuenta = arrC[i][0]
     console.log(arrC)
