@@ -1,16 +1,22 @@
 let board = Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
+  this.posx = 1
+  this.posy = 1
+  this.direction = 1 // 1-up, 2-right, 3-down, 4-left
+}
+const Ghost = function () {
   this.posx = 9
   this.posy = 9
-  this.direction = 1 // 1-up, 2-right, 3-down, 4-left
-
+  this.direction = 1
 }
+const POSX = 1
+const POSY = 1
 let moneyCounter = 0
+let lifesCounter = 3
 const thief = new Thief()
+const ghost = new Ghost()
 const arrR = [[0, 19, 0], [0, 19, 18], [0,4,2], [5,17,2], [3,5,4], [0,11,16], [3,5,13], [6,11,4], [6,11,14], [12,16,4], [12,16,15], [8,11,6], [8,11,12] ]
 const arrC = [[0, 19, 0], [0, 19, 18], [6,12,2], [5,13,4], [5,14,6], [7,12,10], [5,15,12], [6,14,14], [6,14,16]]
-board[8][3] = 3
-
 
 // funciones
 const wallsGeneratorC = function () {
@@ -39,12 +45,12 @@ const wallsGeneratorR = function () {
   }
 }
 const changeDirection = function (code) {
-  if (code === 'ArrowUp') this.direction = 1
-  if (code === 'ArrowRight') this.direction = 2
-  if (code === 'ArrowDown') this.direction = 3
-  if (code === 'ArrowLeft') this.direction = 4
+  if (code === 'ArrowUp') thief.direction = 1
+  if (code === 'ArrowRight') thief.direction = 2
+  if (code === 'ArrowDown') thief.direction = 3
+  if (code === 'ArrowLeft') thief.direction = 4
 }
-// 0 = path 1 = wall 2 = thief 3 = money
+// 0 = path 1 = wall 2 = thief 3 = money 4 = ghost
 const printBoard = function () {
   board.forEach(function (row, r) {
     row.forEach(function (col, c) {
@@ -54,9 +60,10 @@ const printBoard = function () {
         colSelect.classList.add('thief')
       } else if (board[r][c] === 0) {
         colSelect.classList.remove('thief', 'money')
-      }
-      else if (board[r][c] === 3) {
+      } else if (board[r][c] === 3) {
         colSelect.classList.add('money')
+      } else if ( board[r][c] === 4) {
+        colSelect.classList.add('ghost')
       }
     })
   })
@@ -64,43 +71,81 @@ const printBoard = function () {
 
 const moveThief = function () {
   // 1-up, 2-right, 3-down, 4-left
-  if (this.direction === 1 && board[thief.posy - 1][thief.posx] !== 1) {
-    if (board[thief.posy - 1][thief.posx] === 3) {
+  let colisionUp = board[thief.posy - 1][thief.posx]
+  let colisionRight = board[thief.posy][thief.posx + 1]
+  let colisionDown = board[thief.posy + 1][thief.posx]
+  let colisionLeft = board[thief.posy][thief.posx - 1]
+  if (thief.direction === 1 && colisionUp !== 1) {
+    if (colisionUp === 4) {
+      lifesCounter--
+      clearInterval(interval)
+      board[thief.posy][thief.posx] = 0
+      thief.posy = POSY
+      thief.posx = POSX
+    }
+    if (colisionUp === 3) {
       moneyCounter++
     }
     board[thief.posy][thief.posx] = 0
     thief.posy--
-  } else if (this.direction === 2 && board[thief.posy][thief.posx + 1] !== 1) {
-    if (board[thief.posy][thief.posx + 1] === 3) {
+  } else if (thief.direction === 2 && colisionRight !== 1) {
+    if (colisionRight === 4) {
+      lifesCounter--
+      clearInterval(interval)
+      board[thief.posy][thief.posx] = 0
+      thief.posy = POSY
+      thief.posx = POSX
+    }
+    if (colisionRight === 3) {
       moneyCounter++
     }
     board[thief.posy][thief.posx] = 0
     thief.posx++
-  } else if (this.direction === 3 && board[thief.posy + 1][thief.posx] !== 1) {
-    if (board[thief.posy + 1][thief.posx] === 3) {
+  } else if (thief.direction === 3 && colisionDown !== 1) {
+    if (colisionDown === 4) {
+      lifesCounter--
+      clearInterval(interval)
+      board[thief.posy][thief.posx] = 0
+      thief.posy = POSY
+      thief.posx = POSX
+    }
+    if (colisionDown === 3) {
       moneyCounter++
     }
     board[thief.posy][thief.posx] = 0
     thief.posy++
-  } else if (this.direction === 4 && board[thief.posy][thief.posx - 1] !== 1) {
-    if (board[thief.posy][thief.posx - 1] === 3) {
+  } else if (thief.direction === 4 && colisionLeft !== 1) {
+    if (colisionLeft === 4) {
+      console.log(board)
+      lifesCounter--
+      board[thief.posy][thief.posx] = 0
+      thief.posy = POSY
+      thief.posx = POSX
+      thief.direction = -1
+    }
+    if (colisionLeft === 3) {
       moneyCounter++
     }
     board[thief.posy][thief.posx] = 0
     thief.posx--
   }
-  document.getElementById('moneyCounter').innerText = moneyCounter
+  document.getElementById('moneyCounter').innerText = 'Money -> ' + moneyCounter + ' Lifes -> ' + lifesCounter
   board[thief.posy][thief.posx] = 2
+
+}
+const moveGhost = function () {
+  board[ghost.posy][ghost.posx] = 4
 }
 
 const game = function () {
   moveThief()
+  moveGhost()
   printBoard()
 }
 
 // ejecucion del juego
 
-setInterval(game, 200)
+const interval = setInterval(game, 300)
 
 window.addEventListener('keydown', function (e) {
   changeDirection(e.code)
@@ -108,7 +153,7 @@ window.addEventListener('keydown', function (e) {
 
 wallsGeneratorR()
 wallsGeneratorC()
-let newBoard = []
+const newBoard = []
 
 board.forEach(function (row, r) {
   newBoard.push(row.map(function (col, c) {
