@@ -6,10 +6,20 @@ td {
 table {
   margin: 0 auto;
 }
-.thief {
-background-color: red;
-}
+
 
 .walls {
   background-color: blue;
+}
+
+.money {
+  background-color: yellow;
+}
+
+.floor {
+  background-color: black;
+}
+
+.thief {
+background-color: red;
 }
