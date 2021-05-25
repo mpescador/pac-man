@@ -6,7 +6,7 @@ const Thief = function () {
 }
 const Ghost = function () {
   this.posx = 9
-  this.posy = 9
+  this.posy = 8
   this.direction = 1
 }
 const POSX = 1
@@ -78,42 +78,54 @@ const moveThief = function () {
   if (thief.direction === 1 && colisionUp !== 1) {
     if (colisionUp === 4) {
       lifesCounter--
-      clearInterval(interval)
       board[thief.posy][thief.posx] = 0
       thief.posy = POSY
       thief.posx = POSX
+      thief.direction = -1
     }
     if (colisionUp === 3) {
       moneyCounter++
+      board[thief.posy][thief.posx] = 0
+      thief.posy--
     }
-    board[thief.posy][thief.posx] = 0
-    thief.posy--
+    if (colisionUp === 0) {
+      board[thief.posy][thief.posx] = 0
+      thief.posy--
+    }
   } else if (thief.direction === 2 && colisionRight !== 1) {
     if (colisionRight === 4) {
       lifesCounter--
-      clearInterval(interval)
       board[thief.posy][thief.posx] = 0
       thief.posy = POSY
       thief.posx = POSX
+      thief.direction = -1
     }
     if (colisionRight === 3) {
       moneyCounter++
+      board[thief.posy][thief.posx] = 0
+      thief.posx++
     }
-    board[thief.posy][thief.posx] = 0
-    thief.posx++
+    if (colisionRight === 0) {
+      board[thief.posy][thief.posx] = 0
+      thief.posx++
+    }
   } else if (thief.direction === 3 && colisionDown !== 1) {
     if (colisionDown === 4) {
       lifesCounter--
-      clearInterval(interval)
       board[thief.posy][thief.posx] = 0
       thief.posy = POSY
       thief.posx = POSX
+      thief.direction = -1
     }
     if (colisionDown === 3) {
       moneyCounter++
+      board[thief.posy][thief.posx] = 0
+      thief.posy++
     }
-    board[thief.posy][thief.posx] = 0
-    thief.posy++
+    if (colisionDown === 0) {
+      board[thief.posy][thief.posx] = 0
+      thief.posy++
+    }
   } else if (thief.direction === 4 && colisionLeft !== 1) {
     if (colisionLeft === 4) {
       console.log(board)
@@ -125,9 +137,13 @@ const moveThief = function () {
     }
     if (colisionLeft === 3) {
       moneyCounter++
+      board[thief.posy][thief.posx] = 0
+      thief.posx--
     }
-    board[thief.posy][thief.posx] = 0
-    thief.posx--
+    if (colisionLeft === 0) {
+      board[thief.posy][thief.posx] = 0
+      thief.posx--
+    }
   }
   document.getElementById('moneyCounter').innerText = 'Money -> ' + moneyCounter + ' Lifes -> ' + lifesCounter
   board[thief.posy][thief.posx] = 2
