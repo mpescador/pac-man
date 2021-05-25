@@ -21,9 +21,8 @@ table {
 }
 
 .thief {
-background-color: red;
+  background-color: red;
 }
-
 .ghost {
   background-color: blueviolet;
 }
