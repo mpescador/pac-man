@@ -1,4 +1,25 @@
-let board = Array(19).fill(0).map(() => Array(19).fill(0))
+let board = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
+  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
+  [1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+//Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
   this.posx = 9
   this.posy = 9
@@ -56,6 +77,14 @@ const changeDirection = function (code) {
   if (code === 'ArrowRight') thief.direction = 2
   if (code === 'ArrowDown') thief.direction = 3
   if (code === 'ArrowLeft') thief.direction = 4
+}
+let coinCounter = 0
+
+console.log(coinCounter)
+const youWin = function () {
+  if (coinCounter === moneyCounter) {
+    window.alert('You Win!')
+  }
 }
 // 0 = path 1 = wall 2 = thief 3 = money 4 = ghost
 const printBoard = function () {
@@ -121,7 +150,6 @@ const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLef
   // return ghost.direction
 }
 
-
 const moveGhost = function (ghost) {
   let colisionUp = board[ghost.posy - 1][ghost.posx]
   let colisionRight = board[ghost.posy][ghost.posx + 1]
@@ -144,7 +172,6 @@ const moveGhost = function (ghost) {
       ghost.nextCell = colisionUp === 4 ? ghost.nextCell : colisionUp
       ghost.posy--
     }
-
   }
   if (ghost.direction === 2 && colisionRight !== 1) {
     if (board[ghost.posy][ghost.posx + 1] === 2) {
@@ -272,9 +299,8 @@ const game = function () {
   moveGhost(ghost2)
   moveGhost(ghost3)
   moveGhost(ghost4)
-
-  console.log(board)
   printBoard()
+  youWin()
 }
 
 // ejecucion del juego
