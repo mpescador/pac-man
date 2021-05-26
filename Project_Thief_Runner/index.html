@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./src/css/style.css">
   <script src="./src/index.js" defer></script>
+  <link href="http://fonts.cdnfonts.com/css/games" rel="stylesheet">
   <title>Thief Runner</title>
 </head>
 <body>
   <table>
-    <caption id="moneyCounter"></caption>
+    <tr>
+      <td class="panel" rowspan="20">
+        <div id="contentInformation">
+          <div class="title">
+            <p>THIEF RUNNER</p>
+          </div>
+          <ul>
+            <li id="liMoneyCounter">
+              <div id="moneyCounter">0</div>
+            </li>
+            <li id="liLifeCounter">
+              <div id="lifeCounter">0</div>
+            </li>
+          </ul>
+          <div id="btns">
+            <button id="btnPlay"></button>
+            <button id="btnPause"></button>
+          </div>
+          <div>
+            <audio id="myAudio" autoplay="true">
+              <source src="src/assets/sounds/music1.mp3" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </div>
+      </td>
+    </tr>
     <tr class="row1">
       <td class="col1"></td>
       <td class="col2"></td>
@@ -412,5 +440,30 @@
     </tr>
   </table>
 
+
+  <!-- ------------------------------------- modal game over ---------------------------------------->
+  <div id="myModalGameOver" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span id="closeWindowGameOver" class="close">&times;</span>
+      <br>
+      <img src="src/assets/images/jail.svg"></img>
+      <br>
+      <span id="txtgameOver">GAME OVER</span>
+    </div>
+  </div>
+
+  <!-- ------------------------------------- modal win ---------------------------------------->
+  <div id="myModalWin" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span id="closeWindowWin" class="close">&times;</span>
+      <br>
+      <img src="src/assets/images/moneybag.svg"></img>
+      <br>
+      <span id="txtgameWin">YOU WIN</span>
+    </div>
+  </div>
 </body>
+
 </html>

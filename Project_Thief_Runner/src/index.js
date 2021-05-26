@@ -1,29 +1,8 @@
-let board = [
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 3, 3, 3, 3, 3, 1, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 1],
-  [1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1],
-  [1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-//Array(19).fill(0).map(() => Array(19).fill(0))
+let board = Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
   this.posx = 9
   this.posy = 9
-  this.direction = 1 // 1-up, 2-right, 3-down, 4-left
+  this.direction = -1 // 1-up, 2-right, 3-down, 4-left
 }
 const Ghost = function (x, y) {
   this.posx = x
@@ -36,7 +15,7 @@ const Ghost = function (x, y) {
 const POSX = 9
 const POSY = 9
 let moneyCounter = 0
-let lifesCounter = 3
+let lifesCounter = 1
 const thief = new Thief()
 const ghost1 = new Ghost(1, 1)
 const ghost2 = new Ghost(3, 1)
@@ -77,14 +56,6 @@ const changeDirection = function (code) {
   if (code === 'ArrowRight') thief.direction = 2
   if (code === 'ArrowDown') thief.direction = 3
   if (code === 'ArrowLeft') thief.direction = 4
-}
-let coinCounter = 0
-
-console.log(coinCounter)
-const youWin = function () {
-  if (coinCounter === moneyCounter) {
-    window.alert('You Win!')
-  }
 }
 // 0 = path 1 = wall 2 = thief 3 = money 4 = ghost
 const printBoard = function () {
@@ -289,8 +260,23 @@ const moveThief = function () {
       thief.posx--
     }
   }
-  document.getElementById('moneyCounter').innerText = 'Money -> ' + moneyCounter + ' Lifes -> ' + lifesCounter
+  document.getElementById('moneyCounter').innerText = moneyCounter
+  document.getElementById('lifeCounter').innerText = lifesCounter
   board[thief.posy][thief.posx] = 2
+  //if (moneyCounter === moneyTotal) {
+  if (moneyCounter === 20) {
+    clearInterval(interval)
+    let modal = document.getElementById("myModalWin")
+    let span = document.getElementsByClassName("close")[0]
+    modal.style.display = "block"
+    //alert('Victoria')
+  }
+  if (lifesCounter === 0) {
+    clearInterval(interval)
+    let modal = document.getElementById("myModalGameOver")
+    let span = document.getElementsByClassName("close")[0]
+    modal.style.display = "block"
+  }
 }
 
 const game = function () {
@@ -300,12 +286,11 @@ const game = function () {
   moveGhost(ghost3)
   moveGhost(ghost4)
   printBoard()
-  youWin()
 }
 
 // ejecucion del juego
-
-setInterval(game, 300)
+//var interval = setInterval(game, 300)
+var interval
 
 window.addEventListener('keydown', function (e) {
   changeDirection(e.code)
@@ -314,14 +299,55 @@ window.addEventListener('keydown', function (e) {
 wallsGeneratorR()
 wallsGeneratorC()
 const newBoard = []
-
+var moneyTotal = 0
 board.forEach(function (row, r) {
   newBoard.push(row.map(function (col, c) {
     if (col === 0) {
+      moneyTotal++
       return col + 3
     } else {
       return col
     }
   }))
 })
-board = newBoard
+moneyTotal-- // restamos la posicion de inicio de thief
+// board = newBoard
+
+let closeWindow = document.getElementById('closeWindowGameOver')
+closeWindow.addEventListener('click', function () {
+  modal = document.getElementById('myModalGameOver')
+  modal.style.display = "none";
+})
+
+let closeWindowWin = document.getElementById('closeWindowWin')
+closeWindowWin.addEventListener('click', function () {
+  modal = document.getElementById('myModalWin')
+  modal.style.display = "none";
+})
+
+function fillBoard() {
+  for (let i = 0; i < newBoard.length; i++) {
+    for (let j = 0; j < newBoard[i].length; j++) {
+      board[i][j] = newBoard[i][j]
+    }
+  }
+  console.log(board)
+}
+
+var audio = new Audio('src/assets/sounds/music1.mp3')
+
+function startGame() {
+  lifesCounter = 1
+  moneyCounter = 0
+  thief.posy = POSY
+  thief.posx = POSX
+  thief.direction = -1
+  fillBoard()
+  clearInterval(interval)
+  audio.play()
+  interval = setInterval(game, 300)
+}
+
+let btnStartGame = document.getElementById('btnPlay')
+
+btnStartGame.addEventListener('click', startGame)
