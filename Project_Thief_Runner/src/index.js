@@ -1,4 +1,4 @@
-let board = Array(19).fill(0).map(() => Array(19).fill(0))
+const board = Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
   this.posx = 9
   this.posy = 9
@@ -15,7 +15,7 @@ const Ghost = function (x, y) {
 const POSX = 9
 const POSY = 9
 let moneyCounter = 0
-let lifesCounter = 1
+let lifesCounter = 2
 const thief = new Thief()
 const ghost1 = new Ghost(1, 1)
 const ghost2 = new Ghost(3, 1)
@@ -29,7 +29,6 @@ const arrC = [[0, 19, 0], [0, 19, 18], [6, 12, 2], [5, 13, 4], [5, 14, 6], [7, 1
 const wallsGeneratorC = function () {
   for (let i = 0; i < arrR.length; i++) {
     let cuenta = arrR[i][0]
-
     for (let j = arrR[i][0]; j < arrR[i][1]; j++) {
       const rowSelect = document.querySelector(`.row${cuenta + 1}`)
       const colSelect = rowSelect.querySelector(`.col${arrR[i][2] + 1}`)
@@ -79,8 +78,9 @@ const printBoard = function () {
   })
 }
 
-const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLeft) {
-  let freePos = []
+let contCell = 0
+const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLeft, ghost) {
+  const freePos = []
   if (colisionUp !== 1) {
     freePos.push(1)
   }
@@ -93,33 +93,44 @@ const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLef
   if (colisionLeft !== 1) {
     freePos.push(4)
   }
-  let indexRandom = Math.random() * (freePos.length)
-  let indexFloor = Math.floor(indexRandom)
-  return freePos[indexFloor]
 
-
-  // if (colisionUp !== 1) {
-  //   if (Math.abs((ghost.posy - 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
-  //     return 1
-  //   }
-  // }
-  // if (colisionDown !== 1) {
-  //   if (Math.abs((ghost.posy + 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
-  //     return 3
-  //   }
-  // }
-  // if (colisionRight !== 1) {
-  //   if (Math.abs((ghost.posx + 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
-  //     return 2
-  //   }
-  // }
-  // if (colisionLeft !== 1) {
-  //   if (Math.abs((ghost.posx - 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
-  //     return 4
-  //   }
-  // }
-  // return ghost.direction
+  if (contCell !== 4) {
+    contCell++
+    for (let i = 0; i < freePos.length; i++) {
+      if (ghost.direction === freePos[i]) return freePos[i]
+    }
+  }
+  else {
+    const indexRandom = Math.random() * (freePos.length)
+    const indexFloor = Math.floor(indexRandom)
+    contCell = 0
+    return freePos[indexFloor]
+  }
 }
+
+
+// if (colisionUp !== 1) {
+//   if (Math.abs((ghost.posy - 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
+//     return 1
+//   }
+// }
+// if (colisionDown !== 1) {
+//   if (Math.abs((ghost.posy + 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
+//     return 3
+//   }
+// }
+// if (colisionRight !== 1) {
+//   if (Math.abs((ghost.posx + 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
+//     return 2
+//   }
+// }
+// if (colisionLeft !== 1) {
+//   if (Math.abs((ghost.posx - 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
+//     return 4
+//   }
+// }
+// return ghost.direction
+
 
 const moveGhost = function (ghost) {
   let colisionUp = board[ghost.posy - 1][ghost.posx]
@@ -127,8 +138,7 @@ const moveGhost = function (ghost) {
   let colisionDown = board[ghost.posy + 1][ghost.posx]
   let colisionLeft = board[ghost.posy][ghost.posx - 1]
 
-  ghost.direction = checkCell(colisionUp, colisionRight, colisionDown, colisionLeft)
-  // console.log(checkCell(colisionUp, colisionRight, colisionDown, colisionLeft))
+  ghost.direction = checkCell(colisionUp, colisionRight, colisionDown, colisionLeft, ghost)
   // 1-up, 2-right, 3-down, 4-left
 
   if (ghost.direction === 1 && colisionUp !== 1) {
@@ -138,6 +148,7 @@ const moveGhost = function (ghost) {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     } else {
       board[ghost.posy][ghost.posx] = ghost.nextCell
       ghost.nextCell = colisionUp === 4 ? ghost.nextCell : colisionUp
@@ -151,6 +162,7 @@ const moveGhost = function (ghost) {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     } else {
       board[ghost.posy][ghost.posx] = ghost.nextCell
       ghost.nextCell = colisionRight === 4 ? ghost.nextCell : colisionRight
@@ -164,6 +176,7 @@ const moveGhost = function (ghost) {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     } else {
       board[ghost.posy][ghost.posx] = ghost.nextCell
       ghost.nextCell = colisionDown === 4 ? ghost.nextCell : colisionDown
@@ -177,6 +190,7 @@ const moveGhost = function (ghost) {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     } else {
       board[ghost.posy][ghost.posx] = ghost.nextCell
       ghost.nextCell = colisionLeft === 4 ? ghost.nextCell : colisionLeft
@@ -198,6 +212,7 @@ const moveThief = function () {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     }
     if (colisionUp === 3) {
       moneyCounter++
@@ -215,6 +230,7 @@ const moveThief = function () {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     }
     if (colisionRight === 3) {
       moneyCounter++
@@ -232,6 +248,7 @@ const moveThief = function () {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     }
     if (colisionDown === 3) {
       moneyCounter++
@@ -249,6 +266,7 @@ const moveThief = function () {
       thief.posy = POSY
       thief.posx = POSX
       thief.direction = -1
+      soundColisionGhost()
     }
     if (colisionLeft === 3) {
       moneyCounter++
@@ -264,18 +282,25 @@ const moveThief = function () {
   document.getElementById('lifeCounter').innerText = lifesCounter
   board[thief.posy][thief.posx] = 2
   //if (moneyCounter === moneyTotal) {
+ 
   if (moneyCounter === 20) {
+    
     clearInterval(interval)
     let modal = document.getElementById("myModalWin")
     let span = document.getElementsByClassName("close")[0]
     modal.style.display = "block"
-    //alert('Victoria')
+    let audioWin = new Audio('src/assets/sounds/victoria.mp3')
+    audio.pause()
+    audioWin.play()
   }
   if (lifesCounter === 0) {
     clearInterval(interval)
     let modal = document.getElementById("myModalGameOver")
     let span = document.getElementsByClassName("close")[0]
     modal.style.display = "block"
+    let audioGameOver = new Audio('src/assets/sounds/gameover.mp3')
+    audio.pause()
+    audioGameOver.play()
   }
 }
 
@@ -288,6 +313,7 @@ const game = function () {
   printBoard()
 }
 
+
 // ejecucion del juego
 //var interval = setInterval(game, 300)
 var interval
@@ -299,7 +325,7 @@ window.addEventListener('keydown', function (e) {
 wallsGeneratorR()
 wallsGeneratorC()
 const newBoard = []
-var moneyTotal = 0
+let moneyTotal = 0
 board.forEach(function (row, r) {
   newBoard.push(row.map(function (col, c) {
     if (col === 0) {
@@ -331,14 +357,22 @@ function fillBoard() {
       board[i][j] = newBoard[i][j]
     }
   }
-  console.log(board)
 }
 
-var audio = new Audio('src/assets/sounds/music1.mp3')
+let audio = new Audio('src/assets/sounds/music1.mp3')
+let intervalGhost
 
-function startGame() {
-  lifesCounter = 1
+function startGame () {
+  ghost1.posx = 1
+  ghost1.posy = 1
+  ghost2.posx = 3
+  ghost2.posy = 1
+  ghost3.posx = 17
+  ghost3.posy = 17
+  ghost4.posx = 17
+  ghost4.posy = 1
   moneyCounter = 0
+  lifesCounter = 2
   thief.posy = POSY
   thief.posx = POSX
   thief.direction = -1
@@ -348,6 +382,19 @@ function startGame() {
   interval = setInterval(game, 300)
 }
 
-let btnStartGame = document.getElementById('btnPlay')
+function pauseGame () {
+  clearInterval (interval)
+}
 
+let btnStartGame = document.getElementById('btnPlay')
 btnStartGame.addEventListener('click', startGame)
+
+let btnStartPause = document.getElementById('btnPause')
+btnStartPause.addEventListener('click', pauseGame)
+
+function soundColisionGhost () {
+  
+  let audioColisionGhost = new Audio('src/assets/sounds/choquefantasma.mp3')
+  audioColisionGhost.play()
+  
+}
