@@ -303,7 +303,7 @@ const moveThief = function () {
 }
 const winCondition = function () {
   document.getElementById('moneyCounter').innerText = moneyCounter
-  if (moneyCounter === 10 && lvl === 3) {
+  if (moneyCounter === 20 && lvl === 3) {
     clearInterval(interval)
     let modal = document.getElementById('myModalWin')
     let span = document.getElementsByClassName('close')[0]
@@ -315,7 +315,7 @@ const winCondition = function () {
   }
 }
 const winLvl = function () {
-  if (moneyCounter === 10 && lvl < 3) {
+  if (moneyCounter === 20 && lvl < 3) {
     lvl++
     let lvlGame = document.getElementById('lvl')
     lvlGame.innerText = lvl
