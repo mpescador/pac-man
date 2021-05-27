@@ -1,4 +1,4 @@
-const board = Array(19).fill(0).map(() => Array(19).fill(0))
+let board = Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
   this.posx = 9
   this.posy = 9
@@ -17,8 +17,8 @@ const POSX = 9
 const POSY = 9
 let moneyCounter = 0
 let lifesCounter = 2
-const newBoard = []
-let audio = new Audio('src/assets/sounds/music1.mp3')
+let newBoard = []
+const audio = new Audio('src/assets/sounds/music1.mp3')
 let interval
 const thief = new Thief()
 const ghost1 = new Ghost(1, 1)
@@ -31,8 +31,14 @@ let speed = 300
 const arrR = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
 const arrC = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
 
+const arrR2 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
+const arrC2 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6]]
+
+const arrR3 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
+const arrC3 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
+
 // funciones
-const wallsGeneratorC = function () {
+const wallsGeneratorC = function (arrR) {
   for (let i = 0; i < arrR.length; i++) {
     let cuenta = arrR[i][0]
     for (let j = arrR[i][0]; j < arrR[i][1]; j++) {
@@ -44,7 +50,7 @@ const wallsGeneratorC = function () {
     }
   }
 }
-const wallsGeneratorR = function () {
+const wallsGeneratorR = function (arrC) {
   for (let i = 0; i < arrC.length; i++) {
     let cuenta = arrC[i][0]
     for (let j = arrC[i][0]; j < arrC[i][1]; j++) {
@@ -71,9 +77,7 @@ const coinGenerator = function () {
   moneyTotal-- // restamos la posicion de inicio de thief
   // board = newBoard
 }
-wallsGeneratorR()
-wallsGeneratorC()
-coinGenerator()
+
 
 const changeDirection = function (code) {
   if (code === 'ArrowUp') thief.direction = 1
@@ -94,10 +98,13 @@ const printBoard = function () {
         colSelect.classList.remove('thief', 'money', 'ghost')
       } else if (board[r][c] === 3) {
         colSelect.classList.add('money')
-        colSelect.classList.remove('ghost', 'thief')
+        colSelect.classList.remove('ghost', 'thief', 'walls')
       } else if (board[r][c] === 4) {
         colSelect.classList.add('ghost')
         colSelect.classList.remove('thief', 'money')
+      } else if (board[r][c] === 1) {
+        colSelect.classList.add('walls')
+        colSelect.classList.remove('money', 'thief', 'ghost')
       }
     })
   })
@@ -308,11 +315,13 @@ const winCondition = function () {
     let modal = document.getElementById('myModalWin')
     let span = document.getElementsByClassName('close')[0]
     modal.style.display = 'block'
-    let audioWin = new Audio('src/assets/sounds/victoria.mp3')
+    const audioWin = new Audio('src/assets/sounds/victoria.mp3')
     audio.pause()
     audioWin.play()
     lvl = 1
     speed = 300
+    newBoard = []
+    board = Array(19).fill(0).map(() => Array(19).fill(0))
   }
 }
 const winLvl = function () {
@@ -321,7 +330,13 @@ const winLvl = function () {
     let lvlGame = document.getElementById('lvl')
     lvlGame.innerText = lvl
     speed -= lvl * 50
-    level()
+    newBoard = []
+    board = Array(19).fill(0).map(() => Array(19).fill(0))
+    if (lvl === 2) {
+      level(arrR2, arrC2)
+    } else {
+      level(arrR3, arrC3)
+    }
   }
 }
 const loseCondition = function () {
@@ -334,6 +349,8 @@ const loseCondition = function () {
     let audioGameOver = new Audio('src/assets/sounds/gameover.mp3')
     audio.pause()
     audioGameOver.play()
+    newBoard = []
+    board = Array(19).fill(0).map(() => Array(19).fill(0))
   }
 }
 
@@ -380,17 +397,24 @@ const defaultValues = function () {
   ghost4.contCell = 0
   moneyCounter = 0
   lifesCounter = 2
+
   thief.posy = POSY
   thief.posx = POSX
   thief.direction = -1
 }
-function level () {
+function level (arrrows, arrcolum) {
   defaultValues()
+  wallsGeneratorR(arrrows)
+  wallsGeneratorC(arrcolum)
+  coinGenerator()
   fillBoard()
   clearInterval(interval)
   interval = setInterval(game, speed)
 }
-function startGame () {
+function startGame() {
+  wallsGeneratorR(arrR)
+  wallsGeneratorC(arrC)
+  coinGenerator()
   let lvlGame = document.getElementById('lvl')
   lvlGame.innerText = 1
   defaultValues()
