@@ -2,7 +2,7 @@ body {
   background-image: url('../assets/images/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-height: 600px;
+  overflow: hidden;
 
 margin: 0;
 
@@ -63,6 +63,21 @@ table {
   background-image: url('../assets/images/life.svg');
   vertical-align: -7px;
 }
+#liLvl {
+  list-style: none;
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
+
+#liLvl::before{
+  content: '';
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  background-size: cover;
+  background-image: url('../assets/images/lvl.svg');
+  vertical-align: -7px;
+}
 
 .panel {
   background-color: rgb(0, 0, 0, 0.1);
@@ -84,7 +99,7 @@ table {
   text-align: center;
 }
 
-#moneyCounter, #lifeCounter{
+#moneyCounter, #lifeCounter, #lvl{
   text-align: center;
   font-size: 50px;
   margin-left: 50px;
@@ -211,8 +226,8 @@ table {
 }
 
 #btnPlay {
-  margin-top: 30%;
-  margin-bottom: 70px;
+
+
   width: 70px;
   height: 70px;
   background-image: url('../assets/images/play.svg');
