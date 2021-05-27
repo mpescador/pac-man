@@ -337,6 +337,8 @@ const winLvl = function () {
     } else {
       level(arrR3, arrC3)
     }
+    const audioWin = new Audio('src/assets/sounds/level.mp3')
+    audioWin.play()
   }
 }
 const loseCondition = function () {
