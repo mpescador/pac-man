@@ -282,9 +282,9 @@ const moveThief = function () {
   document.getElementById('lifeCounter').innerText = lifesCounter
   board[thief.posy][thief.posx] = 2
   //if (moneyCounter === moneyTotal) {
- 
+
   if (moneyCounter === 20) {
-    
+
     clearInterval(interval)
     let modal = document.getElementById("myModalWin")
     let span = document.getElementsByClassName("close")[0]
@@ -393,8 +393,8 @@ let btnStartPause = document.getElementById('btnPause')
 btnStartPause.addEventListener('click', pauseGame)
 
 function soundColisionGhost () {
-  
+
   let audioColisionGhost = new Audio('src/assets/sounds/choquefantasma.mp3')
   audioColisionGhost.play()
-  
+
 }
