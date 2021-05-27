@@ -312,6 +312,7 @@ const winCondition = function () {
     audio.pause()
     audioWin.play()
     lvl = 1
+    speed = 300
   }
 }
 const winLvl = function () {
@@ -319,7 +320,7 @@ const winLvl = function () {
     lvl++
     let lvlGame = document.getElementById('lvl')
     lvlGame.innerText = lvl
-    speed -= lvl * 10
+    speed -= lvl * 50
     level()
   }
 }
