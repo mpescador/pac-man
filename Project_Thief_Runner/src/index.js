@@ -11,19 +11,23 @@ const Ghost = function (x, y) {
   this.initx = x
   this.inity = y
   this.nextCell = 3
+  this.contCell = 0
 }
 const POSX = 9
 const POSY = 9
 let moneyCounter = 0
 let lifesCounter = 2
+const newBoard = []
+let audio = new Audio('src/assets/sounds/music1.mp3')
+let interval
 const thief = new Thief()
 const ghost1 = new Ghost(1, 1)
-const ghost2 = new Ghost(3, 1)
+const ghost2 = new Ghost(1, 17)
 const ghost3 = new Ghost(17, 17)
 const ghost4 = new Ghost(17, 1)
 
-const arrR = [[0, 19, 0], [0, 19, 18], [0, 4, 2], [5, 17, 2], [3, 5, 4], [0, 11, 16], [3, 5, 13], [6, 11, 4], [6, 11, 14], [12, 16, 4], [12, 16, 15], [8, 11, 6], [8, 11, 12]]
-const arrC = [[0, 19, 0], [0, 19, 18], [6, 12, 2], [5, 13, 4], [5, 14, 6], [7, 12, 10], [5, 15, 12], [6, 14, 14], [6, 14, 16]]
+const arrR = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
+const arrC = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
 
 // funciones
 const wallsGeneratorC = function () {
@@ -50,6 +54,25 @@ const wallsGeneratorR = function () {
     }
   }
 }
+const coinGenerator = function () {
+  let moneyTotal = 0
+  board.forEach(function (row, r) {
+    newBoard.push(row.map(function (col, c) {
+      if (col === 0) {
+        moneyTotal++
+        return col + 3
+      } else {
+        return col
+      }
+    }))
+  })
+  moneyTotal-- // restamos la posicion de inicio de thief
+  // board = newBoard
+}
+wallsGeneratorR()
+wallsGeneratorC()
+coinGenerator()
+
 const changeDirection = function (code) {
   if (code === 'ArrowUp') thief.direction = 1
   if (code === 'ArrowRight') thief.direction = 2
@@ -78,7 +101,6 @@ const printBoard = function () {
   })
 }
 
-let contCell = 0
 const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLeft, ghost) {
   const freePos = []
   if (colisionUp !== 1) {
@@ -94,250 +116,217 @@ const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLef
     freePos.push(4)
   }
 
-  if (contCell !== 4) {
-    contCell++
+  if (ghost.contCell !== 4) {
+    ghost.contCell++
     for (let i = 0; i < freePos.length; i++) {
       if (ghost.direction === freePos[i]) return freePos[i]
     }
-  }
-  else {
+  } else {
     const indexRandom = Math.random() * (freePos.length)
     const indexFloor = Math.floor(indexRandom)
-    contCell = 0
+    ghost.contCell = 0
     return freePos[indexFloor]
   }
 }
 
-
-// if (colisionUp !== 1) {
-//   if (Math.abs((ghost.posy - 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
-//     return 1
-//   }
-// }
-// if (colisionDown !== 1) {
-//   if (Math.abs((ghost.posy + 1) - thief.posy) < Math.abs(ghost.posy - thief.posy)) {
-//     return 3
-//   }
-// }
-// if (colisionRight !== 1) {
-//   if (Math.abs((ghost.posx + 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
-//     return 2
-//   }
-// }
-// if (colisionLeft !== 1) {
-//   if (Math.abs((ghost.posx - 1) - thief.posx) < Math.abs(ghost.posx - thief.posx)) {
-//     return 4
-//   }
-// }
-// return ghost.direction
-
-
+const colisionUpGhost = function (colisionUp, ghost) {
+  if (board[ghost.posy - 1][ghost.posx] === 2) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  } else {
+    board[ghost.posy][ghost.posx] = ghost.nextCell
+    ghost.nextCell = colisionUp === 4 ? ghost.nextCell : colisionUp
+    ghost.posy--
+  }
+}
+const colisionRightGhost = function(colisionRight, ghost) {
+  if (board[ghost.posy][ghost.posx + 1] === 2) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  } else {
+    board[ghost.posy][ghost.posx] = ghost.nextCell
+    ghost.nextCell = colisionRight === 4 ? ghost.nextCell : colisionRight
+    ghost.posx++
+  }
+}
+const colisionDownGhost = function (colisionDown, ghost) {
+  if (board[ghost.posy + 1][ghost.posx] === 2) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  } else {
+    board[ghost.posy][ghost.posx] = ghost.nextCell
+    ghost.nextCell = colisionDown === 4 ? ghost.nextCell : colisionDown
+    ghost.posy++
+  }
+}
+const colisionLeftGhost = function(colisionLeft, ghost) {
+  if (board[ghost.posy][ghost.posx - 1] === 2) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  } else {
+    board[ghost.posy][ghost.posx] = ghost.nextCell
+    ghost.nextCell = colisionLeft === 4 ? ghost.nextCell : colisionLeft
+    ghost.posx--
+  }
+}
 const moveGhost = function (ghost) {
-  let colisionUp = board[ghost.posy - 1][ghost.posx]
-  let colisionRight = board[ghost.posy][ghost.posx + 1]
-  let colisionDown = board[ghost.posy + 1][ghost.posx]
-  let colisionLeft = board[ghost.posy][ghost.posx - 1]
+  const colisionUp = board[ghost.posy - 1][ghost.posx]
+  const colisionRight = board[ghost.posy][ghost.posx + 1]
+  const colisionDown = board[ghost.posy + 1][ghost.posx]
+  const colisionLeft = board[ghost.posy][ghost.posx - 1]
 
   ghost.direction = checkCell(colisionUp, colisionRight, colisionDown, colisionLeft, ghost)
   // 1-up, 2-right, 3-down, 4-left
-
   if (ghost.direction === 1 && colisionUp !== 1) {
-    if (board[ghost.posy - 1][ghost.posx] === 2) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    } else {
-      board[ghost.posy][ghost.posx] = ghost.nextCell
-      ghost.nextCell = colisionUp === 4 ? ghost.nextCell : colisionUp
-      ghost.posy--
-    }
-  }
-  if (ghost.direction === 2 && colisionRight !== 1) {
-    if (board[ghost.posy][ghost.posx + 1] === 2) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    } else {
-      board[ghost.posy][ghost.posx] = ghost.nextCell
-      ghost.nextCell = colisionRight === 4 ? ghost.nextCell : colisionRight
-      ghost.posx++
-    }
-  }
-  if (ghost.direction === 3 && colisionDown !== 1) {
-    if (board[ghost.posy + 1][ghost.posx] === 2) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    } else {
-      board[ghost.posy][ghost.posx] = ghost.nextCell
-      ghost.nextCell = colisionDown === 4 ? ghost.nextCell : colisionDown
-      ghost.posy++
-    }
-  }
-  if (ghost.direction === 4 && colisionLeft !== 1) {
-    if (board[ghost.posy][ghost.posx - 1] === 2) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    } else {
-      board[ghost.posy][ghost.posx] = ghost.nextCell
-      ghost.nextCell = colisionLeft === 4 ? ghost.nextCell : colisionLeft
-      ghost.posx--
-    }
+    colisionUpGhost(colisionUp, ghost)
+  } else if (ghost.direction === 2 && colisionRight !== 1) {
+    colisionRightGhost(colisionRight, ghost)
+  } else if (ghost.direction === 3 && colisionDown !== 1) {
+    colisionDownGhost(colisionDown, ghost)
+  } else if (ghost.direction === 4 && colisionLeft !== 1) {
+    colisionLeftGhost(colisionLeft, ghost)
   }
   board[ghost.posy][ghost.posx] = 4
 }
+
+const moveThiefUp = function (colisionUp) {
+  if (colisionUp === 4) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  }
+  if (colisionUp === 3) {
+    moneyCounter++
+    board[thief.posy][thief.posx] = 0
+    thief.posy--
+  }
+  if (colisionUp === 0) {
+    board[thief.posy][thief.posx] = 0
+    thief.posy--
+  }
+}
+const moveThiefRight = function (colisionRight) {
+  if (colisionRight === 4) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  }
+  if (colisionRight === 3) {
+    moneyCounter++
+    board[thief.posy][thief.posx] = 0
+    thief.posx++
+  }
+  if (colisionRight === 0) {
+    board[thief.posy][thief.posx] = 0
+    thief.posx++
+  }
+}
+const moveThiefDown = function (colisionDown) {
+  if (colisionDown === 4) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  }
+  if (colisionDown === 3) {
+    moneyCounter++
+    board[thief.posy][thief.posx] = 0
+    thief.posy++
+  }
+  if (colisionDown === 0) {
+    board[thief.posy][thief.posx] = 0
+    thief.posy++
+  }
+}
+const moveThiefLeft = function (colisionLeft) {
+  if (colisionLeft === 4) {
+    lifesCounter--
+    board[thief.posy][thief.posx] = 0
+    thief.posy = POSY
+    thief.posx = POSX
+    thief.direction = -1
+    soundColisionGhost()
+  }
+  if (colisionLeft === 3) {
+    moneyCounter++
+    board[thief.posy][thief.posx] = 0
+    thief.posx--
+  }
+  if (colisionLeft === 0) {
+    board[thief.posy][thief.posx] = 0
+    thief.posx--
+  }
+}
+
 const moveThief = function () {
   // 1-up, 2-right, 3-down, 4-left
-  let colisionUp = board[thief.posy - 1][thief.posx]
-  let colisionRight = board[thief.posy][thief.posx + 1]
-  let colisionDown = board[thief.posy + 1][thief.posx]
-  let colisionLeft = board[thief.posy][thief.posx - 1]
+  const colisionUp = board[thief.posy - 1][thief.posx]
+  const colisionRight = board[thief.posy][thief.posx + 1]
+  const colisionDown = board[thief.posy + 1][thief.posx]
+  const colisionLeft = board[thief.posy][thief.posx - 1]
   if (thief.direction === 1 && colisionUp !== 1) {
-    if (colisionUp === 4) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    }
-    if (colisionUp === 3) {
-      moneyCounter++
-      board[thief.posy][thief.posx] = 0
-      thief.posy--
-    }
-    if (colisionUp === 0) {
-      board[thief.posy][thief.posx] = 0
-      thief.posy--
-    }
+    moveThiefUp(colisionUp)
   } else if (thief.direction === 2 && colisionRight !== 1) {
-    if (colisionRight === 4) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    }
-    if (colisionRight === 3) {
-      moneyCounter++
-      board[thief.posy][thief.posx] = 0
-      thief.posx++
-    }
-    if (colisionRight === 0) {
-      board[thief.posy][thief.posx] = 0
-      thief.posx++
-    }
+    moveThiefRight(colisionRight)
   } else if (thief.direction === 3 && colisionDown !== 1) {
-    if (colisionDown === 4) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    }
-    if (colisionDown === 3) {
-      moneyCounter++
-      board[thief.posy][thief.posx] = 0
-      thief.posy++
-    }
-    if (colisionDown === 0) {
-      board[thief.posy][thief.posx] = 0
-      thief.posy++
-    }
+    moveThiefDown(colisionDown)
   } else if (thief.direction === 4 && colisionLeft !== 1) {
-    if (colisionLeft === 4) {
-      lifesCounter--
-      board[thief.posy][thief.posx] = 0
-      thief.posy = POSY
-      thief.posx = POSX
-      thief.direction = -1
-      soundColisionGhost()
-    }
-    if (colisionLeft === 3) {
-      moneyCounter++
-      board[thief.posy][thief.posx] = 0
-      thief.posx--
-    }
-    if (colisionLeft === 0) {
-      board[thief.posy][thief.posx] = 0
-      thief.posx--
-    }
+    moveThiefLeft(colisionLeft)
   }
-  document.getElementById('moneyCounter').innerText = moneyCounter
-  document.getElementById('lifeCounter').innerText = lifesCounter
   board[thief.posy][thief.posx] = 2
-  //if (moneyCounter === moneyTotal) {
-
+}
+const winCondition = function () {
+  document.getElementById('moneyCounter').innerText = moneyCounter
   if (moneyCounter === 20) {
-
     clearInterval(interval)
-    let modal = document.getElementById("myModalWin")
-    let span = document.getElementsByClassName("close")[0]
-    modal.style.display = "block"
+    let modal = document.getElementById('myModalWin')
+    let span = document.getElementsByClassName('close')[0]
+    modal.style.display = 'block'
     let audioWin = new Audio('src/assets/sounds/victoria.mp3')
     audio.pause()
     audioWin.play()
   }
+}
+const loseCondition = function () {
+  document.getElementById('lifeCounter').innerText = lifesCounter
   if (lifesCounter === 0) {
     clearInterval(interval)
-    let modal = document.getElementById("myModalGameOver")
-    let span = document.getElementsByClassName("close")[0]
-    modal.style.display = "block"
+    let modal = document.getElementById('myModalGameOver')
+    let span = document.getElementsByClassName('close')[0]
+    modal.style.display = 'block'
     let audioGameOver = new Audio('src/assets/sounds/gameover.mp3')
     audio.pause()
     audioGameOver.play()
   }
 }
 
-const game = function () {
-  moveThief()
-  moveGhost(ghost1)
-  moveGhost(ghost2)
-  moveGhost(ghost3)
-  moveGhost(ghost4)
-  printBoard()
-}
-
-
-// ejecucion del juego
-//var interval = setInterval(game, 300)
-var interval
-
 window.addEventListener('keydown', function (e) {
   changeDirection(e.code)
 })
-
-wallsGeneratorR()
-wallsGeneratorC()
-const newBoard = []
-let moneyTotal = 0
-board.forEach(function (row, r) {
-  newBoard.push(row.map(function (col, c) {
-    if (col === 0) {
-      moneyTotal++
-      return col + 3
-    } else {
-      return col
-    }
-  }))
-})
-moneyTotal-- // restamos la posicion de inicio de thief
-// board = newBoard
 
 let closeWindow = document.getElementById('closeWindowGameOver')
 closeWindow.addEventListener('click', function () {
@@ -359,42 +348,59 @@ function fillBoard() {
   }
 }
 
-let audio = new Audio('src/assets/sounds/music1.mp3')
-let intervalGhost
-
-function startGame () {
+const defaultValues = function () {
   ghost1.posx = 1
   ghost1.posy = 1
-  ghost2.posx = 3
-  ghost2.posy = 1
+  ghost2.posx = 1
+  ghost2.posy = 17
   ghost3.posx = 17
   ghost3.posy = 17
   ghost4.posx = 17
   ghost4.posy = 1
+  ghost1.contCell = 0
+  ghost2.contCell = 0
+  ghost3.contCell = 0
+  ghost4.contCell = 0
   moneyCounter = 0
   lifesCounter = 2
   thief.posy = POSY
   thief.posx = POSX
   thief.direction = -1
+}
+
+function startGame () {
+  defaultValues()
   fillBoard()
   clearInterval(interval)
   audio.play()
   interval = setInterval(game, 300)
 }
-
-function pauseGame () {
-  clearInterval (interval)
+// ejecucion del juego
+const game = function () {
+  moveThief()
+  moveGhost(ghost1)
+  moveGhost(ghost2)
+  moveGhost(ghost3)
+  moveGhost(ghost4)
+  winCondition()
+  loseCondition()
+  printBoard()
 }
 
-let btnStartGame = document.getElementById('btnPlay')
+const btnStartGame = document.getElementById('btnPlay')
 btnStartGame.addEventListener('click', startGame)
 
-let btnStartPause = document.getElementById('btnPause')
-btnStartPause.addEventListener('click', pauseGame)
-
 function soundColisionGhost () {
-
-  let audioColisionGhost = new Audio('src/assets/sounds/choquefantasma.mp3')
+  const audioColisionGhost = new Audio('src/assets/sounds/choquefantasma.mp3')
   audioColisionGhost.play()
-
+}
+window.onload = function () {
+  const windowIni = document.getElementById('modalIniGame')
+  const tableGame = document.getElementsByTagName('table')[0]
+  tableGame.style.display = 'none'
+  windowIni.style.display = 'block'
+  setTimeout(function () {
+    windowIni.style.display = 'none'
+    tableGame.style.display = 'inline-block'
+  }, 3000)
 }

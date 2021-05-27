@@ -2,7 +2,9 @@ body {
   background-image: url('../assets/images/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-height: 584px;
+height: 600px;
+
+margin: 0;
 
 }
 td {
@@ -240,5 +242,19 @@ table {
   letter-spacing: 2px;
   color: red;
   text-align: center;
+
+}
+/**ini***/
+.modalIni {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 110%;
+  height: 100%;
+  background: url('../assets/images/portada.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 
 }
