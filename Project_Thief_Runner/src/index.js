@@ -25,11 +25,12 @@ const cop1 = new Cop(1, 1)
 const cop2 = new Cop(1, 17)
 const cop3 = new Cop(17, 17)
 const cop4 = new Cop(17, 1)
+//const cop5 = new Cop(16, 1)
 let lvl = 1
 let speed = 300
 
 const arrR = [[0, 19, 0], [0, 19, 18], [2, 6, 2], [8, 11, 2], [8, 11, 4], [8, 11, 6], [13, 16, 6], [12, 13, 5], [15, 16, 5], [13, 16, 4], [2, 6, 9], [2, 6, 13], [7, 11, 9], [7, 11, 13], [12, 17, 9], [2, 17, 15], [5, 14, 16], [8, 11, 17]]
-const arrC = [[0, 19, 0], [0, 19, 18], [3, 7, 2], [3, 5, 5], [2, 7, 7], [2, 7, 12], [9, 14, 2], [9, 14, 5], [9, 14, 7], [9, 14, 10], [9, 14, 14], [4, 7, 4]]
+const arrC = [[0, 7, 0], [8, 19, 0], [0, 7, 18], [8, 18, 18], [3, 7, 2], [3, 5, 5], [2, 7, 7], [2, 7, 12], [9, 14, 2], [9, 14, 5], [9, 14, 7], [9, 14, 10], [9, 14, 14], [4, 7, 4]]
 
 const arrR2 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
 const arrC2 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
@@ -164,6 +165,12 @@ const colisionRightCop = function (colisionRight, cop) {
     cop.nextCell = colisionRight === 4 ? cop.nextCell : colisionRight
     cop.posx++
   }
+  if (cop.posx === 18 && cop.posy === 7) {
+    console.log('if2')
+    board[cop.posy][cop.posx] = 0
+    cop.posx = 0
+    cop.posy = 7
+  }
 }
 const colisionDownCop = function (colisionDown, cop) {
   if (board[cop.posy + 1][cop.posx] === 2) {
@@ -191,6 +198,12 @@ const colisionLeftCop = function (colisionLeft, cop) {
     board[cop.posy][cop.posx] = cop.nextCell
     cop.nextCell = colisionLeft === 4 ? cop.nextCell : colisionLeft
     cop.posx--
+  }
+  if (cop.posx === 0 && cop.posy === 7) {
+    console.log(board)
+    board[cop.posy][cop.posx] = 0
+    cop.posx = 18
+    cop.posy = 7
   }
 }
 const moveCop = function (cop) {
@@ -247,8 +260,15 @@ const moveThiefRight = function (colisionRight) {
     thief.posx++
   }
   if (colisionRight === 0) {
+    console.log('if1')
     board[thief.posy][thief.posx] = 0
     thief.posx++
+  }
+  if (thief.posx === 18 && thief.posy === 7) {
+    console.log('if2')
+    board[thief.posy][thief.posx] = 0
+    thief.posx = 0
+    thief.posy = 7
   }
 }
 const moveThiefDown = function (colisionDown) {
@@ -287,6 +307,12 @@ const moveThiefLeft = function (colisionLeft) {
   if (colisionLeft === 0) {
     board[thief.posy][thief.posx] = 0
     thief.posx--
+  }
+  if (thief.posx === 0 && thief.posy === 7) {
+    console.log(board)
+    board[thief.posy][thief.posx] = 0
+    thief.posx = 18
+    thief.posy = 7
   }
 }
 
@@ -401,27 +427,34 @@ const defaultValues = function () {
   thief.posx = POSX
   thief.direction = -1
 }
-function level (arrrows, arrcolum) {
+function level(arrrows, arrcolum) {
   defaultValues()
   wallsGeneratorR(arrrows)
   wallsGeneratorC(arrcolum)
   coinGenerator()
   fillBoard()
   clearInterval(interval)
+  // transport
+  board[7][18] = 0
+  board[7][0] = 0
   interval = setInterval(game, speed)
 }
-function startGame () {
+function startGame() {
+
   let modal = document.getElementById('myModalGameOver')
   modal.style.display = 'none'
   let modal1 = document.getElementById('myModalWin')
   modal1.style.display = 'none'
   newBoard = []
   board = Array(19).fill(0).map(() => Array(19).fill(0))
+  printBoard()
   wallsGeneratorR(arrR)
   wallsGeneratorC(arrC)
   coinGenerator()
   let lvlGame = document.getElementById('lvl')
   lvlGame.innerText = 1
+  lvl = 1
+  speed = 300
   defaultValues()
   fillBoard()
   board[5][14] = 0
@@ -438,7 +471,9 @@ function startGame () {
   board[10][9] = 0
   board[12][8] = 0
   board[12][9] = 0
-  console.log(board)
+  // transport
+  board[7][18] = 0
+  board[7][0] = 0
   clearInterval(interval)
   audio.play()
   interval = setInterval(game, speed)
