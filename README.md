@@ -1,8 +1,16 @@
-# pac-man
-El protagonista del videojuego Pac-Man es un círculo  al que le falta un sector, por lo que parece tener boca. Aparece en laberintos donde debe comer puntos pequeños (llamados «Pac-dots» en inglés). El objetivo del personaje es comer todos los puntos de la pantalla,  cuatro fantasmas o monstruos, recorren el laberinto para intentar capturar a Pac-Man
+Thief Runner
 
-Qué hace el proyecto.
-Por qué el proyecto es útil.
-Cómo pueden comenzar los usuarios con el proyecto.
-Dónde pueden recibir ayuda los usuarios con tu proyecto
-Quién mantiene y contribuye con el proyecto.
+What does the game do ?
+
+The project is a videogame based on Pac-Man. It use the same mechanics as Pac-Man and we add our own functionalities. We also changed the style and give it some personality.
+
+Why is it a useful project ?
+
+It is a educative project to learn programming using html, css and js.
+
+Who build the project ?
+
+The project has been developed in a team of three. 
+-leynad1392
+-mpescador
+-JuanPablo272394
