@@ -134,7 +134,7 @@ table {
   filter: saturate(300%) brightness(100%) contrast(150%);
 }
 
-.ghost {
+.cop {
   background-image: url('../assets/images/police.svg');
   background-size: 95%;
   background-repeat: no-repeat;
