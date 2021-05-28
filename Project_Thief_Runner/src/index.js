@@ -312,7 +312,6 @@ const winCondition = function () {
   if (moneyCounter === 20 && lvl === 3) {
     clearInterval(interval)
     let modal = document.getElementById('myModalWin')
-    let span = document.getElementsByClassName('close')[0]
     modal.style.display = 'block'
     const audioWin = new Audio('src/assets/sounds/victoria.mp3')
     audio.pause()
@@ -345,7 +344,6 @@ const loseCondition = function () {
   if (lifesCounter === 0) {
     clearInterval(interval)
     let modal = document.getElementById('myModalGameOver')
-    let span = document.getElementsByClassName('close')[0]
     modal.style.display = 'block'
     let audioGameOver = new Audio('src/assets/sounds/gameover.mp3')
     audio.pause()
@@ -413,6 +411,10 @@ function level (arrrows, arrcolum) {
   interval = setInterval(game, speed)
 }
 function startGame () {
+  let modal = document.getElementById('myModalGameOver')
+  modal.style.display = 'none'
+  let modal1 = document.getElementById('myModalWin')
+  modal1.style.display = 'none'
   newBoard = []
   board = Array(19).fill(0).map(() => Array(19).fill(0))
   wallsGeneratorR(arrR)
