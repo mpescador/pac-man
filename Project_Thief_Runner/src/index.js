@@ -1,7 +1,7 @@
 let board = Array(19).fill(0).map(() => Array(19).fill(0))
 const Thief = function () {
   this.posx = 9
-  this.posy = 9
+  this.posy = 8
   this.direction = -1 // 1-up, 2-right, 3-down, 4-left
 }
 const Ghost = function (x, y) {
@@ -14,7 +14,7 @@ const Ghost = function (x, y) {
   this.contCell = 0
 }
 const POSX = 9
-const POSY = 9
+const POSY = 8
 let moneyCounter = 0
 let lifesCounter = 2
 let newBoard = []
@@ -28,14 +28,14 @@ const ghost4 = new Ghost(17, 1)
 let lvl = 1
 let speed = 300
 
-const arrR = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
-const arrC = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
+const arrR = [[0, 19, 0], [0, 19, 18], [2, 6, 2], [8, 11, 2], [8, 11, 4], [8, 11, 6], [13, 16, 6], [12, 13, 5], [15, 16, 5], [13, 16, 4], [2, 6, 9], [2, 6, 13], [7, 11, 9], [7, 11, 13], [12, 17, 9], [2, 17, 15], [5, 14, 16], [8, 11, 17]]
+const arrC = [[0, 19, 0], [0, 19, 18], [3, 7, 2], [3, 5, 5], [2, 7, 7], [2, 7, 12], [9, 14, 2], [9, 14, 5], [9, 14, 7], [9, 14, 10], [9, 14, 14], [4, 7, 4]]
 
 const arrR2 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
-const arrC2 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6]]
+const arrC2 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
 
-const arrR3 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
-const arrC3 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16], [8, 11, 8]]
+const arrR3 = [[0, 19, 0], [0, 19, 18], [6, 9, 2], [10, 13, 2], [5, 9, 4], [10, 13, 4], [5, 8, 6], [9, 15, 6], [7, 12, 10], [5, 10, 12], [11, 17, 12], [16, 18, 6], [6, 9, 14], [10, 15, 14], [6, 9, 16], [10, 15, 16]]
+const arrC3 = [[0, 19, 0], [0, 19, 18], [2, 5, 2], [6, 10, 2], [11, 17, 2], [2, 5, 4], [0, 5, 16], [8, 11, 16], [2, 5, 14], [6, 11, 4], [8, 11, 14], [12, 17, 4], [14, 17, 16], [8, 11, 6], [8, 11, 12]]
 
 // funciones
 const wallsGeneratorC = function (arrR) {
@@ -78,7 +78,6 @@ const coinGenerator = function () {
   // board = newBoard
 }
 
-
 const changeDirection = function (code) {
   if (code === 'ArrowUp') thief.direction = 1
   if (code === 'ArrowRight') thief.direction = 2
@@ -95,7 +94,7 @@ const printBoard = function () {
         colSelect.classList.add('thief')
         colSelect.classList.remove('money', 'ghost')
       } else if (board[r][c] === 0) {
-        colSelect.classList.remove('thief', 'money', 'ghost')
+        colSelect.classList.remove('thief', 'money', 'ghost', 'walls')
       } else if (board[r][c] === 3) {
         colSelect.classList.add('money')
         colSelect.classList.remove('ghost', 'thief', 'walls')
@@ -125,7 +124,7 @@ const checkCell = function (colisionUp, colisionRight, colisionDown, colisionLef
     freePos.push(4)
   }
 
-  if (ghost.contCell !== 4) {
+  if (ghost.contCell !== 3) {
     ghost.contCell++
     for (let i = 0; i < freePos.length; i++) {
       if (ghost.direction === freePos[i]) return freePos[i]
@@ -413,7 +412,9 @@ function level (arrrows, arrcolum) {
   clearInterval(interval)
   interval = setInterval(game, speed)
 }
-function startGame() {
+function startGame () {
+  newBoard = []
+  board = Array(19).fill(0).map(() => Array(19).fill(0))
   wallsGeneratorR(arrR)
   wallsGeneratorC(arrC)
   coinGenerator()
@@ -421,6 +422,21 @@ function startGame() {
   lvlGame.innerText = 1
   defaultValues()
   fillBoard()
+  board[5][14] = 0
+  board[5][13] = 0
+  board[11][3] = 0
+  board[11][4] = 0
+  board[10][3] = 0
+  board[10][4] = 0
+  board[12][3] = 0
+  board[12][4] = 0
+  board[11][8] = 0
+  board[11][9] = 0
+  board[10][8] = 0
+  board[10][9] = 0
+  board[12][8] = 0
+  board[12][9] = 0
+  console.log(board)
   clearInterval(interval)
   audio.play()
   interval = setInterval(game, speed)
